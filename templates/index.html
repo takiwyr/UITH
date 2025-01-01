@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VNLAWRAG</title>
     <style>
-        /* Giao diện tối (Dark Mode) */
         body.dark-mode {
-        background-color: #2c2c2c;
-        color: white;
-        font-family: Arial, sans-serif;
+            background-color: #2c2c2c;
+            color: white;
+            font-family: Arial, sans-serif;
         }
 
         .app-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            padding-bottom: 60px; /* Dự phòng cho thanh nhập liệu */
+            padding-bottom: 60px;
         }
 
         .app-header {
@@ -57,22 +56,33 @@
         }
 
         .message {
-            background-color: #444;
-            padding: 10px;
-            border-radius: 5px;
             max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: #444;
+            color: white;
+            border: 1px solid #555;
+            text-align: right;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            color: white;
+            text-align: left;
         }
 
         .sender {
             font-weight: bold;
-            color: #ffdd57;
         }
 
         .text {
             margin-top: 5px;
         }
 
-        /* Thanh nhập liệu với nút gửi bên trong */
         .input-container {
             background-color: #333;
             padding: 10px;
@@ -89,14 +99,14 @@
         .input-box {
             position: relative;
             width: 100%;
-            max-width: 600px; /* Giới hạn chiều rộng */
+            max-width: 600px;
             display: flex;
             align-items: center;
         }
 
         textarea {
             width: 100%;
-            padding: 10px 45px 10px 12px; /* Khoảng trống cho nút gửi */
+            padding: 10px 45px 10px 12px;
             border: 1px solid #444;
             border-radius: 25px;
             background-color: #555;
@@ -112,7 +122,6 @@
             outline: none;
         }
 
-        /* Nút gửi bên trong thanh nhập liệu */
         #send-btn {
             position: absolute;
             right: 10px;
@@ -159,23 +168,23 @@
         function toggleSettings() {
             alert('Settings clicked'); // Placeholder function
         }
-    
+
         document.getElementById('send-btn').addEventListener('click', function(event) {
             event.preventDefault();
-    
+
             const userInput = document.getElementById('message-input').value.trim();
             const chatBox = document.getElementById('chat-box');
-    
+
             if (!userInput || userInput.length === 0) return;
-    
+
             // Hiển thị tin nhắn người dùng
             const userMessage = document.createElement('div');
-            userMessage.classList.add('message');
-            userMessage.innerHTML = `<p class="sender">You</p><p>${sanitizeHTML(userInput)}</p>`;
+            userMessage.classList.add('message', 'user');
+            userMessage.innerHTML = `<p class="sender"></p><p>${sanitizeHTML(userInput)}</p>`;
             chatBox.appendChild(userMessage);
-    
+
             // Gửi yêu cầu đến API
-            fetch('https://7c8f-35-227-155-160.ngrok-free.app/predict', {
+            fetch('https://9e5c-34-116-81-3.ngrok-free.app/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ message: userInput })
@@ -187,40 +196,33 @@
                 return response.json();
             })
             .then(data => {
-                console.log('Server response:', data); // Log phản hồi từ server để kiểm tra
                 const botMessage = document.createElement('div');
-                botMessage.classList.add('message');
-    
-                // Kiểm tra và hiển thị phản hồi từ bot
+                botMessage.classList.add('message', 'bot');
+
                 if (data.answer) {
-                    botMessage.innerHTML = `<p class="sender">Bot</p><p>${sanitizeHTML(data.answer)}</p>`;
+                    botMessage.innerHTML = `<p>${sanitizeHTML(data.answer)}</p>`;
                 } else {
-                    botMessage.innerHTML = `<p class="sender">Bot</p><p>Response is missing the "answer" key.</p>`;
+                    botMessage.innerHTML = `<p>Response is missing the "answer" key.</p>`;
                 }
-    
+
                 chatBox.appendChild(botMessage);
                 chatBox.scrollTop = chatBox.scrollHeight;
             })
             .catch(error => {
-                console.error('Error:', error);
                 const errorMessage = document.createElement('div');
-                errorMessage.classList.add('message');
-                errorMessage.innerHTML = `<p class="sender">Bot</p><p>Error: ${error.message || 'Unable to process request.'}</p>`;
+                errorMessage.classList.add('message', 'bot');
+                errorMessage.innerHTML = `<p>Error: ${error.message || 'Unable to process request.'}</p>`;
                 chatBox.appendChild(errorMessage);
             });
-    
-            // Xóa nội dung nhập liệu
+
             document.getElementById('message-input').value = '';
         });
-    
-        // Hàm xử lý văn bản đầu vào an toàn
+
         function sanitizeHTML(text) {
             const div = document.createElement('div');
             div.innerText = text;
             return div.innerHTML;
         }
     </script>
-    
-    
 </body>
 </html>
