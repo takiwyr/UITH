@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VNLAWRAG</title>
+    <title>UITH</title>
     <style>
         body.dark-mode {
             background-color: #2c2c2c;
@@ -29,18 +29,20 @@
         .app-header .logo {
             height: 40px;
             margin-right: 10px;
+            border-radius: 50%;
         }
 
         .app-header h1 {
             font-size: 24px;
         }
 
-        #settings-btn {
+        #settings-btn, #clear-chat-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
+            margin-left: 10px;
         }
 
         .chat-container {
@@ -59,20 +61,20 @@
             max-width: 80%;
             padding: 10px;
             border-radius: 10px;
+            word-wrap: break-word;
+            background-color: #444;
+            color: white;
+            border: 1px solid #555;
+            max-height: 150px;
+            overflow-y: auto;
         }
 
         .message.user {
             align-self: flex-end;
-            background-color: #444;
-            color: white;
-            border: 1px solid #555;
-            text-align: right;
         }
 
         .message.bot {
             align-self: flex-start;
-            color: white;
-            text-align: left;
         }
 
         .sender {
@@ -147,9 +149,12 @@
 </head>
 <body class="dark-mode">
     <header class="app-header">
-        <img class="logo" src="{{ url_for('static', filename='images/logo.webp') }}" alt="VNLAWRAG Logo">
-        <h1>VNLAWRAG</h1>
-        <button id="settings-btn" onclick="toggleSettings()">⚙️</button>
+        <img class="logo" src="{{ url_for('static', filename='images/chatbot.webp') }}" alt="Heathcare Logo">
+        <h1>UITH</h1>
+        <div>
+            <button id="clear-chat-btn" onclick="clearChat()">🗑️</button>
+            <button id="settings-btn" onclick="toggleSettings()">⚙️</button>
+        </div>
     </header>
     <div class="app-container">
         <main class="chat-container">
@@ -169,6 +174,11 @@
             alert('Settings clicked'); // Placeholder function
         }
 
+        function clearChat() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = ''; // Xóa toàn bộ nội dung chat
+        }
+
         document.getElementById('send-btn').addEventListener('click', function(event) {
             event.preventDefault();
 
@@ -180,11 +190,11 @@
             // Hiển thị tin nhắn người dùng
             const userMessage = document.createElement('div');
             userMessage.classList.add('message', 'user');
-            userMessage.innerHTML = `<p class="sender"></p><p>${sanitizeHTML(userInput)}</p>`;
+            userMessage.innerHTML = `<p>${sanitizeHTML(userInput)}</p>`;
             chatBox.appendChild(userMessage);
 
             // Gửi yêu cầu đến API
-            fetch('https://256b-35-247-123-193.ngrok-free.app/predict', {
+            fetch('https://a664-35-190-176-218.ngrok-free.app/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({ message: userInput })
